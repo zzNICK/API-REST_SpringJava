@@ -1,10 +1,12 @@
 package com.cliente.entrega.controller;
 
-import java.util.Arrays;
+
 import java.util.List;
 
-import javax.persistence.EntityManager;	// Uma inteface para fazer operações com as entidades que serão refletidas depois no DB como um CRUD
-import javax.persistence.PersistenceContext;
+import javax.validation.Valid;
+
+// import javax.persistence.EntityManager;	// Uma inteface para fazer operações com as entidades que serão refletidas depois no DB como um CRUD
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,18 +38,18 @@ public class ClienteController {
 	}
 	
 	@GetMapping("/{clienteId}")
-	public ResponseEntity<Cliente> buscar(@PathVariable Long clienteId) {
+	public ResponseEntity<Cliente> buscar(@PathVariable @Valid Long clienteId) {    // Valid, serve para validar na hora que executa o metodo/ Na entrada do metodo
 		return clienteRepository.findById(clienteId).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
 	}
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED) // Modificando Status para 201 como CRIADO
-	public Cliente adicionar(@RequestBody Cliente cliente) {
+	public Cliente adicionar(@Valid @RequestBody Cliente cliente) {
 		return clienteRepository.save(cliente);
 	}
 	
 	@PutMapping("/{clienteId}")
-	public ResponseEntity<Cliente> atualizar(@PathVariable Long clienteId, @RequestBody Cliente cliente) {
+	public ResponseEntity<Cliente> atualizar(@PathVariable  @Valid Long clienteId, @RequestBody Cliente cliente) {
 		if (!clienteRepository.existsById(clienteId)) {
 			return ResponseEntity.notFound().build();
 		}
