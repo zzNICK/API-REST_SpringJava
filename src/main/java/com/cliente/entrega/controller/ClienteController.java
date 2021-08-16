@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cliente.entrega.model.Cliente;
 import com.cliente.entrega.repository.ClienteRepository;
+import com.cliente.entrega.service.ClienteService;
 
 @RestController
 @RequestMapping("/clientes")
@@ -30,6 +31,9 @@ public class ClienteController {
 	
 	@Autowired // Anotações para dizer que queremos implentar uma instancia que esta sendo gerenciada pelo Spring
 	private ClienteRepository clienteRepository; // Variável de instancia 
+	
+	@Autowired
+	private ClienteService clienteService;
 	
 	@GetMapping
 	public List<Cliente> listar() {
@@ -45,7 +49,7 @@ public class ClienteController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED) // Modificando Status para 201 como CRIADO
 	public Cliente adicionar(@Valid @RequestBody Cliente cliente) {
-		return clienteRepository.save(cliente);
+		return clienteService.salvar(cliente);
 	}
 	
 	@PutMapping("/{clienteId}")
@@ -54,7 +58,7 @@ public class ClienteController {
 			return ResponseEntity.notFound().build();
 		}
 		cliente.setId(clienteId);
-		cliente = clienteRepository.save(cliente);
+		cliente = clienteService.salvar(cliente);
 		return ResponseEntity.ok(cliente);
 	}
 	
@@ -63,7 +67,8 @@ public class ClienteController {
 		if(!clienteRepository.existsById(clienteId)) {
 			return ResponseEntity.notFound().build();
 		}
-		clienteRepository.deleteById(clienteId);
+		//clienteRepository.deleteById(clienteId);
+		clienteService.excluir(clienteId);
 		return ResponseEntity.noContent().build(); // Codigo http 204
 	}
 }

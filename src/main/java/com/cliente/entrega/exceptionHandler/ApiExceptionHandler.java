@@ -14,8 +14,11 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.cliente.entrega.exception.ServiceException;
 
 @ControllerAdvice // Essa anotação, diz que a classe é um componente Spring, com o propósito de tratar todas exceções de modo global, para todos os controlladores da applicação
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
@@ -41,5 +44,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler{
 		error.setCampos(campos);
 		
 		return handleExceptionInternal(ex, error, headers, status, request);
+	}
+	
+	@ExceptionHandler(ServiceException.class)
+	public ResponseEntity<Object> handServiceException(ServiceException ex, WebRequest request) {
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		Error error = new Error();
+		error.setStatus(status.value());
+		error.setDataHora(LocalDateTime.now());
+		error.setTitulo(ex.getMessage());
+		
+		return handleExceptionInternal(ex, error, new HttpHeaders(), status, request);
 	}
 }
